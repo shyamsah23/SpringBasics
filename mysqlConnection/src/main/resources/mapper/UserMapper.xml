@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.example.mysqlConnection.mapper.UserMapper">
+    
+    <resultMap id="UserResultMap" type="com.example.mysqlConnection.model.User">
+        <id property="id" column="user_id" />
+        <result property="name" column="user_name" />
+        
+        
+        <association property="departement" column="departement_id" javaType="com.example.mysqlConnection.model.Departement">
+            <id property="id" column="departement_id" />
+            <result property="name" column="departement_name" />
+        </association>
+        
+        
+        <collection property="address" ofType="com.example.mysqlConnection.model.Address">
+            <id property="id" column="address_id" />
+            <result property="city" column="address_city" />
+            <result property="pinCode" column="address_pinCode" />
+        </collection>
+    </resultMap>
+	
+	<resultMap id="UserNameResultMap" type="com.example.mysqlConnection.model.User">
+		<result property="id" column="user_id" />
+		<result property="name" column="user_Name" />
+		
+		<association property="departement" javaType="com.example.mysqlConnection.model.Departement">
+			<result property="name" column="departement_name" />
+		</association>
+		
+	</resultMap>
+	
+    <select id="getUserById" parameterType="int" resultMap="UserResultMap">
+        SELECT 
+            u.id AS user_id, 
+            u.name AS user_name,
+            d.id AS departement_id,
+            d.name AS departement_name,
+            a.id AS address_id,
+            a.city AS address_city,
+            a.pinCode AS address_pinCode
+        FROM User u
+        LEFT JOIN Departement d ON u.departementId = d.id
+        LEFT JOIN Address a ON u.id = a.userId
+        WHERE u.id = #{id}
+    </select>
+    <select id="getAllUsers" resultMap="UserResultMap">
+    	SELECT 
+            u.id AS user_id, 
+            u.name AS user_name,
+            d.id AS departement_id,
+            d.name AS departement_name,
+            a.id AS address_id,
+            a.city AS address_city,
+            a.pinCode AS address_pinCode
+       		FROM User u
+        	LEFT JOIN Departement d ON u.departementId = d.id
+        	LEFT JOIN Address a ON u.id = a.userId
+    </select>
+    
+    <select id="getUserNameAndDepartementName" resultMap="UserNameResultMap">
+     		SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            d.name AS departement_name
+        FROM User u
+        LEFT JOIN Departement d ON u.departementId = d.id
+        WHERE u.id = #{id}
+    </select>
+    
+</mapper>
+
+
